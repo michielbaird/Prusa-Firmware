@@ -346,7 +346,7 @@ static int temp_runaway_error_counter[4];
         p=soft_pwm_bed;       
         SERIAL_PROTOCOLPGM("ok B:");
       }else{
-        p=soft_pwm[extruder]; 		
+        p=soft_pwm[extruder];
 		SERIAL_PROTOCOLPGM("ok T:");
       }
 		SERIAL_PROTOCOL(input);   
@@ -1104,8 +1104,7 @@ void temp_runaway_check(int _heater_id, float _target_temperature, float _curren
 	static float __preheat_start[2] = { 0,0}; //currently just bed and one extruder
 	static int __preheat_counter[2] = { 0,0};
 	static int __preheat_errors[2] = { 0,0};
-		
-	
+
 #ifdef 	TEMP_RUNAWAY_BED_TIMEOUT
 	if (_isbed)
 	{
@@ -1242,9 +1241,9 @@ void temp_runaway_stop(bool isPreheat, bool isBed)
 	disable_e2();
 	manage_heater();
 	lcd_update();
-	WRITE(BEEPER, HIGH);
+	WRITE(BEEPER_PIN, HIGH);
 	delayMicroseconds(500);
-	WRITE(BEEPER, LOW);
+	WRITE(BEEPER_PIN, LOW);
 	delayMicroseconds(100);
 
 	if (isPreheat)
@@ -1324,10 +1323,10 @@ void max_temp_error(uint8_t e) {
   #endif
     SET_OUTPUT(EXTRUDER_0_AUTO_FAN_PIN);
     SET_OUTPUT(FAN_PIN);
-    SET_OUTPUT(BEEPER);
+    SET_OUTPUT(BEEPER_PIN);
     WRITE(FAN_PIN, 1);
     WRITE(EXTRUDER_0_AUTO_FAN_PIN, 1);
-    WRITE(BEEPER, 1);
+    WRITE(BEEPER_PIN, 1);
     // fanSpeed will consumed by the check_axes_activity() routine.
     fanSpeed=255;
 	if (farm_mode) { prusa_statistics(93); }

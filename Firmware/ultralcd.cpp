@@ -4047,11 +4047,11 @@ static void lcd_disable_farm_mode() {
 static void lcd_ping_alert() {
 	if ((abs(millis() - alert_timer)*0.001) > PING_ALERT_PERIOD) {
 		alert_timer = millis();
-		SET_OUTPUT(BEEPER);
+		SET_OUTPUT(BEEPER_PIN);
 		for (int i = 0; i < 2; i++) {
-			WRITE(BEEPER, HIGH);
+			WRITE(BEEPER_PIN, HIGH);
 			delay(50);
-			WRITE(BEEPER, LOW);
+			WRITE(BEEPER_PIN, LOW);
 			delay(100);
 		}
 	}
@@ -4753,10 +4753,10 @@ static void lcd_main_menu()
 }
 
 void stack_error() {
-	SET_OUTPUT(BEEPER);
-	WRITE(BEEPER, HIGH);
+	SET_OUTPUT(BEEPER_PIN);
+	WRITE(BEEPER_PIN, HIGH);
 	delay(1000);
-	WRITE(BEEPER, LOW);
+	WRITE(BEEPER_PIN, LOW);
 	lcd_display_message_fullscreen_P(MSG_STACK_ERROR);
 	//err_triggered = 1;
 	 while (1) delay_keep_alive(1000);
