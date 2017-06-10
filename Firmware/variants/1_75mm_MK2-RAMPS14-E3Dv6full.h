@@ -16,7 +16,7 @@ GENERAL SETTINGS
 #define CUSTOM_MENDEL_NAME "Prusa i3 MK2"
 
 // Electronics
-#define MOTHERBOARD BOARD_RAMBO_MINI_1_3
+#define MOTHERBOARD BOARD_RAMPS_1_4
 
 // Prusa Single extruder multiple material suport
 //#define SNMM
