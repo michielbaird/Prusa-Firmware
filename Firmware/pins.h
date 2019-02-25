@@ -35,6 +35,10 @@
 #include "pins_Einsy_1_0.h"
 #endif //MOTHERBOARD == BOARD_EINSY_1_0a
 
+#if MOTHERBOARD == BOARD_RAMPS_1_4 //206 - new
+#include "pins_RAMPS_1_4.h"
+#endif //MOTHERBOARD == BOARD_RAMPS_1_4
+
 #ifndef KNOWN_BOARD
 #error Unknown MOTHERBOARD value in configuration.h
 #endif
@@ -98,5 +102,8 @@
                         HEATER_BED_PIN, FAN_PIN,                  \
                         _E0_PINS _E1_PINS _E2_PINS             \
                         analogInputToDigitalPin(TEMP_0_PIN), analogInputToDigitalPin(TEMP_1_PIN), analogInputToDigitalPin(TEMP_2_PIN), analogInputToDigitalPin(TEMP_BED_PIN) }
+
+
+//#define ADC_CHAN_MSK 1<<(TEMP_0_PIN)| 1 <<(TEMP_1_PIN) | 1 << (TEMP_BED_PIN) |  1 << (TEMP_AMBIENT_PIN) |  1 << (TEMP_PINDA_PIN) | 1 << VOLT_PWR_PIN | 1 << VOLT_BED_PIN
 
 #endif //__PINS_H

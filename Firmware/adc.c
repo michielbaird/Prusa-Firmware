@@ -7,7 +7,7 @@
 
 uint8_t adc_state;
 uint8_t adc_count;
-uint16_t adc_values[ADC_CHAN_CNT];
+uint16_t adc_values[16];
 uint16_t adc_sim_mask;
 
 
@@ -25,7 +25,8 @@ void adc_init(void)
 	ADCSRA |= (1 << ADEN);
 //	ADCSRA |= (1 << ADIF) | (1 << ADSC);
 	DIDR0 = (ADC_CHAN_MSK & 0xff);
-	DIDR2 = (ADC_CHAN_MSK >> 8);
+	DIDR2 = ((ADC_CHAN_MSK >> 8) & 0xff);
+
 	adc_reset();
 //	adc_sim_mask = 0b0101;
 //	adc_sim_mask = 0b100101;
@@ -45,7 +46,7 @@ void adc_reset(void)
 
 void adc_setmux(uint8_t ch)
 {
-	ch &= 0x0f;
+	ch &= 0x1f;
 	if (ch & 0x08) ADCSRB |= (1 << MUX5);
 	else ADCSRB &= ~(1 << MUX5);
 	ADMUX = (ADMUX & ~(0x07)) | (ch & 0x07);
@@ -68,7 +69,7 @@ void adc_cycle(void)
 {
 	if (adc_state & 0x80)
 	{
-		uint8_t index = adc_state & 0x0f;
+		uint8_t index = adc_state & 0x1f;
 		if ((adc_sim_mask & (1 << index)) == 0)
 			adc_values[index] += ADC;
 		if (++index >= ADC_CHAN_CNT)

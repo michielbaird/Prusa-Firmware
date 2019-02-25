@@ -24,9 +24,11 @@ http://resnet.uoregon.edu/~gurney_j/jmpc/bitwise.html
 
 extern uint8_t adc_state;
 extern uint8_t adc_count;
-extern uint16_t adc_values[ADC_CHAN_CNT];
+extern uint16_t adc_values[16];
 extern uint16_t adc_sim_mask;
-
+#define BITCOUNT(x) (((BX_(x)+(BX_(x)>>4)) & 0x0F0F0F0F) % 255)
+#define BX_(x) ((x) - (((x)>>1)&0x77777777) - (((x)>>2)&0x33333333) - (((x)>>3)&0x11111111))
+#define ADC_PIN_IDX(pin) BITCOUNT(ADC_CHAN_MSK & ((1 << (pin)) - 1))
 
 extern void adc_init(void);
 
