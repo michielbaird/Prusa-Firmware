@@ -1,5 +1,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
+#define ULTRALCD
 
 #include "boards.h"
 

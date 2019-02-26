@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_PRUSA_H
 #define CONFIGURATION_PRUSA_H
 
+#include <limits.h>
 /*------------------------------------
 GENERAL SETTINGS
 *------------------------------------*/
@@ -14,7 +15,7 @@ GENERAL SETTINGS
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Prusa Blue"
+#define CUSTOM_MENDEL_NAME "Prusa i3 Blue"
 
 // Electronics
 #define MOTHERBOARD BOARD_RAMPS_1_4
@@ -35,24 +36,24 @@ AXIS SETTINGS
 
 // Steps per unit {X,Y,Z,E}
 #ifdef SNMM
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,800,133}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100, 800,133}
 #else
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,800,133}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100, 800,133}
 #endif
 
 
 // Endstop inverting
-const bool X_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
-const bool Y_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
-const bool Z_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
+#define X_MIN_ENDSTOP_INVERTING 0 // set to 1 to invert the logic of the endstop.
+#define Y_MIN_ENDSTOP_INVERTING 0 // set to 1 to invert the logic of the endstop.
+#define Z_MIN_ENDSTOP_INVERTING 0 // set to 1 to invert the logic of the endstop.
 
 // Direction inverting
-#define INVERT_X_DIR false    // for Mendel set to false, for Orca set to true
-#define INVERT_Y_DIR false    // for Mendel set to true, for Orca set to false
-#define INVERT_Z_DIR false    // for Mendel set to false, for Orca set to true
-#define INVERT_E0_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E2_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_X_DIR 0    // for Mendel set to 0, for Orca set to 1
+#define INVERT_Y_DIR 0    // for Mendel set to 1, for Orca set to 0
+#define INVERT_Z_DIR 0    // for Mendel set to 0, for Orca set to 1
+#define INVERT_E0_DIR 1    // for direct drive extruder v9 set to 1, for geared extruder set to 0
+#define INVERT_E1_DIR 1    // for direct drive extruder v9 set to 1, for geared extruder set to 0
+#define INVERT_E2_DIR 1    // for direct drive extruder v9 set to 1, for geared extruder set to 0
 
 
 // Home position
@@ -81,7 +82,9 @@ const bool Z_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 #define HOMING_FEEDRATE {3000, 3000, 800, 0}  // set the homing speeds (mm/min)
 
 #define DEFAULT_MAX_FEEDRATE          {500, 500, 12, 120}    // (mm/sec)
+#define DEFAULT_MAX_FEEDRATE_SILENT         {172, 172, 12, 120}      // (mm/sec)   max feedrate (M203), silent mode
 #define DEFAULT_MAX_ACCELERATION      {9000,9000,500,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for Skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_ACCELERATION_SILENT     {960, 960, 200, 5000}    // (mm/sec^2) max acceleration (M201), silent mode
 
 #define DEFAULT_ACCELERATION          1500    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  1500   // X, Y, Z and E max acceleration in mm/s^2 for retracts
@@ -100,10 +103,18 @@ EXTRUDER SETTINGS
 *------------------------------------*/
 
 // Mintemps
-#define HEATER_0_MINTEMP 15
+#define HEATER_0_MINTEMP 30
 #define HEATER_1_MINTEMP 5
 #define HEATER_2_MINTEMP 5
-#define BED_MINTEMP 15
+#define HEATER_MINTEMP_DELAY 15000                // [ms] ! if changed, check maximal allowed value @ ShortTimer
+#if HEATER_MINTEMP_DELAY>USHRT_MAX
+#error "Check maximal allowed value @ ShortTimer (see HEATER_MINTEMP_DELAY definition)"
+#endif
+#define BED_MINTEMP 30
+#define BED_MINTEMP_DELAY 50000                   // [ms] ! if changed, check maximal allowed value @ ShortTimer
+#if BED_MINTEMP_DELAY>USHRT_MAX
+#error "Check maximal allowed value @ ShortTimer (see BED_MINTEMP_DELAY definition)"
+#endif
 
 // Maxtemps
 #if defined(E3D_PT100_EXTRUDER_WITH_AMP) || defined(E3D_PT100_EXTRUDER_NO_AMP)
@@ -128,10 +139,9 @@ EXTRUDER SETTINGS
 #endif
 
 // Extrude mintemp
-#define EXTRUDE_MINTEMP 130
+#define EXTRUDE_MINTEMP 175
 
 // Extruder cooling fans
-#define EXTRUDER_0_AUTO_FAN_PIN   8
 #define EXTRUDER_1_AUTO_FAN_PIN   -1
 #define EXTRUDER_2_AUTO_FAN_PIN   -1
 #define EXTRUDER_AUTO_FAN_TEMPERATURE 50
@@ -163,12 +173,13 @@ CHANGE FILAMENT SETTINGS
 #define FILAMENTCHANGE_FIRSTRETRACT -2
 #define FILAMENTCHANGE_FINALRETRACT -80
 
-#define FILAMENTCHANGE_FIRSTFEED 70
-#define FILAMENTCHANGE_FINALFEED 50
+#define FILAMENTCHANGE_FIRSTFEED 70 //E distance in mm for fast filament loading sequence used used in filament change (M600)
+#define FILAMENTCHANGE_FINALFEED 50 //E distance in mm for slow filament loading sequence used used in filament change (M600) and filament load (M701)
 #define FILAMENTCHANGE_RECFEED 5
 
 #define FILAMENTCHANGE_XYFEED 50
-#define FILAMENTCHANGE_EFEED 20
+#define FILAMENTCHANGE_EFEED_FIRST 20 // feedrate in mm/s for fast filament loading sequence used in filament change (M600)
+#define FILAMENTCHANGE_EFEED_FINAL 3.3f // feedrate in mm/s for slow filament loading sequence used in filament change (M600) and filament load (M701)
 #define FILAMENTCHANGE_RFEED 400
 #define FILAMENTCHANGE_EXFEED 2
 #define FILAMENTCHANGE_ZFEED 15
@@ -233,6 +244,9 @@ BED SETTINGS
 // Mesh measure definition
 #define MESH_MEAS_NUM_X_POINTS 3
 #define MESH_MEAS_NUM_Y_POINTS 3
+
+// Maximum bed level correction value
+#define BED_ADJUSTMENT_UM_MAX 100
 
 #define MESH_HOME_Z_CALIB 0.2
 #define MESH_HOME_Z_SEARCH 5 //Z lift for homing, mesh bed leveling etc.
@@ -302,27 +316,27 @@ PREHEAT SETTINGS
 
 #define PLA_PREHEAT_HOTEND_TEMP 215
 #define PLA_PREHEAT_HPB_TEMP 55
-#define PLA_PREHEAT_FAN_SPEED 0  
+#define PLA_PREHEAT_FAN_SPEED 0
 
 #define ABS_PREHEAT_HOTEND_TEMP 255
 #define ABS_PREHEAT_HPB_TEMP 100
-#define ABS_PREHEAT_FAN_SPEED 0 
+#define ABS_PREHEAT_FAN_SPEED 0
 
 #define HIPS_PREHEAT_HOTEND_TEMP 220
 #define HIPS_PREHEAT_HPB_TEMP 100
-#define HIPS_PREHEAT_FAN_SPEED 0 
+#define HIPS_PREHEAT_FAN_SPEED 0
 
 #define PP_PREHEAT_HOTEND_TEMP 254
 #define PP_PREHEAT_HPB_TEMP 100
-#define PP_PREHEAT_FAN_SPEED 0 
+#define PP_PREHEAT_FAN_SPEED 0
 
 #define PET_PREHEAT_HOTEND_TEMP 240
 #define PET_PREHEAT_HPB_TEMP 90
-#define PET_PREHEAT_FAN_SPEED 0 
+#define PET_PREHEAT_FAN_SPEED 0
 
 #define FLEX_PREHEAT_HOTEND_TEMP 230
 #define FLEX_PREHEAT_HPB_TEMP 50
-#define FLEX_PREHEAT_FAN_SPEED 0 
+#define FLEX_PREHEAT_FAN_SPEED 0
 
 /*------------------------------------
 THERMISTORS SETTINGS
@@ -348,7 +362,7 @@ THERMISTORS SETTINGS
 // 10 is 100k RS thermistor 198-961 (4.7k pullup)
 // 11 is 100k beta 3950 1% thermistor (4.7k pullup)
 // 12 is 100k 0603 SMD Vishay NTCS0603E3104FXT (4.7k pullup) (calibrated for Makibox hot bed)
-// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE" 
+// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE"
 // 20 is the PT100 circuit found in the Ultimainboard V2.x
 // 60 is 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
 //
@@ -403,29 +417,32 @@ THERMISTORS SETTINGS
 #define PINDA_MAX_T 100
 
 #define PING_TIME 60 //time in s
-#define PING_TIME_LONG 600 //10 min; used when length of commands buffer > 0 to avoid false triggering when dealing with long gcodes
+#define PING_TIME_LONG 600 //10 min; used when length of commands buffer > 0 to avoid 0 triggering when dealing with long gcodes
 #define PING_ALLERT_PERIOD 60 //time in s
 
 #define NC_TIME 10 //time in s for periodic important status messages sending which needs reponse from monitoring
 #define NC_BUTTON_LONG_PRESS 15 //time in s
 
-#define LONG_PRESS_TIME 1000 //time in ms for button long press 
+#define LONG_PRESS_TIME 1000 //time in ms for button long press
 #define BUTTON_BLANKING_TIME 200 //time in ms for blanking after button release
 
 #define DEFAULT_PID_TEMP 210
 
-#ifdef SNMM
-#define DEFAULT_RETRACTION 4 //used for PINDA temp calibration and pause print
-#else
-#define DEFAULT_RETRACTION 1 //used for PINDA temp calibration and pause print
-#endif
 
-#define END_FILE_SECTION 10000 //number of bytes from end of file used for checking if file is complete
+#define END_FILE_SECTION 20000 //number of bytes from end of file used for checking if file is complete
+
+// Safety timer
+#define SAFETYTIMER
+#define DEFAULT_SAFETYTIMER_TIME_MINS 30
 
 #define M600_TIMEOUT 600  //seconds
 
+#define MMU_REQUIRED_FW_BUILDNR 132
+
 #ifndef SNMM
-#define SUPPORT_VERBOSITY
+//#define SUPPORT_VERBOSITY
 #endif
+
+#define MMU_IDLER_SENSOR_ATTEMPTS_NR 21 //max. number of attempts to load filament if first load failed; value for max bowden length and case when loading fails right at the beginning
 
 #endif //__CONFIGURATION_PRUSA_H
